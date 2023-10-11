@@ -1,9 +1,20 @@
+const { end } = require("../db");
+
 const usermodels = {
-    getAll: `
+    getUsers: `
     SELECT 
     * 
     FROM 
     Users`,
+
+    getByID: `
+    SELECT
+    *
+    FROM
+    USERS
+    WHERE
+    id= ?
+    `,
 
 }
 
