@@ -43,11 +43,34 @@ const usermodels = {
     getByEmail: `
     SELECT
     id 
-    FROM
+    FROM 
     Users
     WHERE
     email = ?
     `,
+    //mi modificacion
+    updateUser: `
+         UPDATE Users
+         SET 
+             username = ?,
+             email = ?,
+             password = ?,
+             name = ?,
+             lastname = ?,
+             phone_number = ?,
+             is_active = ?
+         WHERE
+             id = ?
+  `,
+///delate 19-10-2023///
+  deleteRow:`
+     UPDATE
+     Users
+     SET
+     is_active = 0
+     WHERE
+     id = ?
+  `,
 }
 
 module.exports = usermodels;
