@@ -136,7 +136,7 @@ res.json({msg: 'User added successfully'});
 }
 
 
-//Mi modificacion//18-10-2023
+/*/Mi modificacion//18-10-2023
 
 const updateUser = async (req, res) => {
     const { id } = req.params;
@@ -178,7 +178,7 @@ const updateUser = async (req, res) => {
       }
   
       // Realizacion de cambios
-      const allowedFields = ['username', 'email', 'password', 'name', 'lastname', 'phone_number', 'is_active'];
+      const allowedFields = ['username', 'email', 'password', 'name', 'lastname', 'phone_number', 'role_id','is_active'];
       const updateData = {};
   
       allowedFields.forEach((field) => {
@@ -201,6 +201,7 @@ const updateUser = async (req, res) => {
           updateData.name,
           updateData.lastname,
           updateData.phone_number,
+          updateData.role_id,
           updateData.is_active,
           id
         ]
@@ -219,7 +220,98 @@ const updateUser = async (req, res) => {
     }
   };
   
-  //HASTA AQUI MI TERMINACION.//
+  //HASTA AQUI MI TERMINACION./*/
+
+//UPDATEUSERS//
+const updateUser=async(req, res)=>{
+  const {
+      username,
+      email,
+      password,
+      name,
+      lastname,
+      phone_number,
+      role_id,
+      is_active ,
+  } = req.body;
+
+const {id} = req.params;
+let newUserData=[
+  username,
+  email,
+  password,
+  name,
+  lastname,
+  phone_number,
+  role_id,
+  is_active   
+];
+let conn;
+try{
+  conn = await pool.getConnection();
+const [userExists]=await conn.query(
+  usermodels.getByID,
+  [id],
+  (err) => {if (err) throw err;}
+);
+if (!userExists || userExists.id_active === 0){
+  res.status(404).json({msg:'User not found'});
+  return;
+}
+
+const [usernameUser] = await conn.query(
+  usermodels.getByUserame,
+  [username],
+  (err) => {if (err) throw err;}
+);
+if (usernameUser){
+  res.status(409).json({msg:`User with username ${username} already exists`});
+  return;
+}
+
+const [emailUser] = await conn.query(
+  usermodels.getByEmail,
+  [email],
+  (err) => {if (err) throw err;}
+);
+if (emailUser){
+  res.status(409).json({msg:`User with email ${email} already exists`});
+  return;
+}
+
+const oldUserData = [
+  userExists.username,
+  userExists.email,
+  userExists.password,
+  userExists.name,
+  userExists.lastname,
+  userExists.phone_number,
+  userExists.role_id,
+  userExists.is_active  
+];
+
+newUserData.forEach((userData, index)=> {
+  if (!userData){
+      newUserData[index] = oldUserData[index];
+  }
+})
+
+const userUpdate = await conn.query(
+  usermodels.updateUser,
+  [...newUserData, id],
+  (err) => {if (err) throw err;}
+);
+if(userUpdate.affecteRows === 0){
+  throw new Error ('User not updated');
+}
+res.json({msg:'User updated successfully'})
+}catch (error){
+      console.log(error);
+      res.status(500).json(error);
+  } finally{
+      if (conn) conn.end();
+  }
+}
 
 //detele usuario 19-100203//
 const deteleUsers = async (req = request, res = response) => {
@@ -260,4 +352,4 @@ const deteleUsers = async (req = request, res = response) => {
     if (conn) conn.end();
   }
 }
-module.exports={listUsers, listUsersByID, addUser,updateUser,deteleUsers};
+module.exports={listUsers, listUsersByID, addUser, updateUser, deteleUsers};

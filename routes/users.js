@@ -14,4 +14,4 @@ router.put('/', addUser);
 //mi modificacion
 router.patch('/:id', updateUser);  ///MI MODIFCACION.
 router.delete('/:id', deteleUsers);
-module.exports =router;
+module.exports = router;

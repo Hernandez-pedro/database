@@ -48,9 +48,10 @@ const usermodels = {
     WHERE
     email = ?
     `,
-    //mi modificacion
-    updateUser: `
-         UPDATE Users
+    //mi modificacion 18-10-2023
+    /*/updateUser: `
+         UPDATE 
+         Users
          SET 
              username = ?,
              email = ?,
@@ -58,10 +59,29 @@ const usermodels = {
              name = ?,
              lastname = ?,
              phone_number = ?,
+             role_id = ?,
              is_active = ?
          WHERE
              id = ?
-  `,
+  `,*/
+
+
+  updateUser: `
+  UPDATE 
+     Users
+  SET 
+      username = ?,
+      email = ?,
+      password = ?,
+      name = ?,
+      lastname = ?,
+      phone_number = ?,
+      role_id = ?,
+      is_active = ?
+  WHERE
+      id = ?
+`,
+
 ///delate 19-10-2023///
   deleteRow:`
      UPDATE
