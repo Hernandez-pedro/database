@@ -1,4 +1,5 @@
 const {request, response} = require('express');
+const bcrypt = require ('bcrypt');
 const usermodels = require('../models/users');
 const pool=require('../db');
 
@@ -77,9 +78,15 @@ const addUser = async (req = request, res =response)=>{
         res.status(400).json ({msg: 'Missing information'});
         return;
     }
+///24-10-2023//
 
-    const user =[username, email, password, name, lastname, phone_number, role_id, is_active]
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password,saltRounds);
 
+
+
+    const user =[username, email, passwordHash, name, lastname, phone_number, role_id, is_active];
+//24-10-2023 hasta aqui//
     let conn;
 
     try{
@@ -107,16 +114,7 @@ const addUser = async (req = request, res =response)=>{
             return;
         }
 
-        /*name*/
-        const [password] = await conn.query(
-            usermodels.getBypassword,
-            [password],
-            (err)=>{if (err) throw err;}
-        );
-        if (password) {
-            res.status(409).json({msg: `USER WHTH PASSWORD ${password} already exists`});
-            return;
-        }
+
 
 const userAdded = await conn.query(usermodels.addRow, [...user], (err) => {
   if (err)throw err;
@@ -258,7 +256,7 @@ if (!userExists || userExists.id_active === 0){
   res.status(404).json({msg:'User not found'});
   return;
 }
-
+//24-10-2023//
 const [usernameUser] = await conn.query(
   usermodels.getByUserame,
   [username],
@@ -269,15 +267,16 @@ if (usernameUser){
   return;
 }
 
-const [emailUser] = await conn.query(
+const [emailUsers] = await conn.query(
   usermodels.getByEmail,
   [email],
-  (err) => {if (err) throw err;}
+  (err)=>{if (err) throw err;}
 );
-if (emailUser){
-  res.status(409).json({msg:`User with email ${email} already exists`});
+if (emailUsers) {
+  res.status(409).json({msg: `USER WHTH EMAIL ${email} already exists`});
   return;
 }
+//24-10-2023/hasta qui/
 
 const oldUserData = [
   userExists.username,
@@ -311,7 +310,7 @@ res.json({msg:'User updated successfully'})
   } finally{
       if (conn) conn.end();
   }
-}
+};
 
 //detele usuario 19-100203//
 const deteleUsers = async (req = request, res = response) => {
