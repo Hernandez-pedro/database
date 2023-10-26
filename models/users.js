@@ -31,13 +31,11 @@ const usermodels = {
     `,
    
     getByUserame: `
-    SELECT id 
+    SELECT 
+    * 
     FROM
     Users
-    WHERE
-    username = ?
-
-    
+    WHERE username = ?
     `,
 
     getByEmail: `
