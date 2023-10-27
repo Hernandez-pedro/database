@@ -79,10 +79,11 @@ const addUser = async (req = request, res =response)=>{
         return;
     }
 ///24-10-2023//
-
+    let passwordHash
+    if (password) {
     const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password,saltRounds);
-
+    passwordHash = await bcrypt.hash(password,saltRounds);
+    }
 
 
     const user =[username, email, passwordHash, name, lastname, phone_number, role_id, is_active];
